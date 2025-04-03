@@ -15,15 +15,28 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> login(
       String username, String password, BuildContext context) async {
-    if (username == "admin" && password == "admin@123") {
+    if (username.isEmpty && password.isEmpty) {
+      _showSnackBar(context, "Please enter your username and password");
+      return false;
+    } else if (username.isEmpty) {
+      _showSnackBar(context, "Please enter your username");
+      return false;
+    } else if (password.isEmpty) {
+      _showSnackBar(context, "Please enter your password");
+      return false;
+    } else if (username == "admin" && password == "admin@123") {
       _isAuthenticated = true;
       notifyListeners();
       return true;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid username or password!")),
-      );
+      _showSnackBar(context, "Invalid username or password");
       return false;
     }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }

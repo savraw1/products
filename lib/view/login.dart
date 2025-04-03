@@ -121,35 +121,19 @@ class Login extends StatelessWidget {
     );
   }
 
-  void _login(BuildContext context) {
+  void _login(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     String username = usernameController.text.trim();
     String password = passwordController.text.trim();
 
-    if (username.isEmpty && password.isEmpty) {
-      _showSnackBar(context, "Please enter your username and password");
-      return;
-    } else if (username.isEmpty) {
-      _showSnackBar(context, "Please enter your username");
-      return;
-    } else if (password.isEmpty) {
-      _showSnackBar(context, "Please enter your password");
-      return;
-    } else if (password.length < 6) {
-      _showSnackBar(context, "Password must be at least 6 characters long");
-      return;
-    } else if (username == "admin" && password == "admin@123") {
+    bool success = await authProvider.login(username, password, context);
+
+    if (success) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => ProductList()),
       );
-    } else {
-      _showSnackBar(context, "Invalid username or password");
     }
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 }
